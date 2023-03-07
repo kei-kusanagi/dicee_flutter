@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:rive/rive.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   return runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: _iconBool ? _darkTheme : _ligthTheme,
       home: Scaffold(
-
-        appBar: AppBar(
-          title: const Text('Dicee'),
-          backgroundColor: Colors.deepOrange,
-        ),
         body: DicePage(),
       ),
     ),
@@ -24,6 +23,20 @@ class DicePage extends StatefulWidget {
   @override
   State<DicePage> createState() => _DicePageState();
 }
+
+bool _iconBool = true;
+IconData _iconLight = Icons.wb_sunny;
+IconData _iconDark = Icons.nights_stay;
+
+ThemeData _ligthTheme = ThemeData(
+  primarySwatch: Colors.amber,
+  brightness: Brightness.light,
+  scaffoldBackgroundColor: Colors.lightBlueAccent,
+);
+ThemeData _darkTheme = ThemeData(
+  primarySwatch: Colors.red,
+  brightness: Brightness.dark,
+);
 
 class _DicePageState extends State<DicePage> {
   int leftDiceNumber = 1;
@@ -46,26 +59,41 @@ class _DicePageState extends State<DicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.purple.shade800,
-      body: Stack(
-        children: [
-          const RiveAnimation.asset("RiveAssets/reloadl.riv"),
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: const SizedBox(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: _iconBool ? _darkTheme : _ligthTheme,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Dicee'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _iconBool = !_iconBool;
+                });
+              },
+              icon: Icon(_iconBool ? _iconDark : _iconLight),
             ),
-          ),
-
-          Column(
-            children: [
-              const SizedBox(
-                height: 200,
-                width: 200,
+          ],
+        ),
+        // backgroundColor: Colors.grey.shade500,
+        body: Stack(
+          children: [
+            const RiveAnimation.asset("RiveAssets/reloadl.riv"),
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: const SizedBox(),
               ),
-              Center(
-                child: Row(
+            ),
+            Column(
+              children: [
+                const SizedBox(
+                  height: 200,
+                  width: 200,
+                ),
+                Center(
+                  child: Row(
                     children: [
                       Expanded(
                         child: TextButton(
@@ -91,15 +119,15 @@ class _DicePageState extends State<DicePage> {
                           child: Image.asset('images/dice$rightDiceNumber.png'),
                         ),
                       ),
-
                     ],
+                  ),
                 ),
-              ),
-              Center(
+                Center(
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       _btnAnimationController.isActive = true;
-                      setState( () {
+                      setState(
+                        () {
                           randomNumber();
                         },
                       );
@@ -109,28 +137,33 @@ class _DicePageState extends State<DicePage> {
                       width: 200,
                       child: Stack(
                         children: [
-                          RiveAnimation.asset("RiveAssets/button.riv",
-                          // RiveAnimation.asset("RiveAssets/reloadl.riv",
-                          controllers: [_btnAnimationController],
-                        ),
-                          Positioned.fill(child: Row(
+                          RiveAnimation.asset(
+                            "RiveAssets/button.riv",
+                            // RiveAnimation.asset("RiveAssets/reloadl.riv",
+                            controllers: [_btnAnimationController],
+                          ),
+                          Positioned.fill(
+                              child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
                               SizedBox(width: 8),
-                              Text("Tirar ambos",
-                              style: TextStyle(fontWeight: FontWeight.w800),
+                              Text(
+                                "Tirar ambos",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.purple),
                               ),
                             ],
                           ))
                         ],
                       ),
-
                     ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
